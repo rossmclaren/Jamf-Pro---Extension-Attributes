@@ -1,9 +1,23 @@
 #!/bin/bash
 
-# Check if the Adobe Remote Update Manager (AUSST) is installed
-if [ ! -e "/usr/local/bin/RemoteUpdateManager" ]; then
-    echo "<result>Adobe Remote Update Manager (AUSST) not found.</result>"
-    exit 1
+# Check if the Adobe Creative Cloud app is installed
+if [ -d "/Applications/Adobe Creative Cloud" ]; then
+    echo "Adobe Creative Cloud app found. Checking Remote Update Manager installation status..."
+    
+    # Check if the Adobe Remote Update Manager (AUSST) is installed
+    if [ ! -e "/usr/local/bin/RemoteUpdateManager" ]; then
+        echo "Adobe Remote Update Manager (AUSST) not found."
+        
+        # Call a custom trigger policy to install Remote Update Manager
+        /usr/local/bin/jamf policy -trigger install_remote_update_manager
+        
+        exit 1
+    else
+        echo "Adobe Remote Update Manager (AUSST) is installed."
+    fi
+else
+    echo "Adobe Creative Cloud app not found."
+    exit 0
 fi
 
 # Run the Adobe Remote Update Manager and capture the output
